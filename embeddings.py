@@ -15,17 +15,16 @@ from llama_index.node_parser import SimpleNodeParser
 from llama_index import SimpleDirectoryReader, VectorStoreIndex, ServiceContext, StorageContext
 from llama_index.storage.docstore import SimpleDocumentStore
 
-from legalease_environment import openai_key #your key here from file 
 
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 logging.getLogger().addHandler(logging.StreamHandler(stream=sys.stdout))
 
-os.environ["OPENAI_API_KEY"]=openai_key
+os.environ["OPENAI_API_KEY"]="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"
 
-# Reading Document
+
 def generate_embeddings(ls: list):
-    
     for name in ls:
+        # Reading Document
         documents = SimpleDirectoryReader(input_files=[f"{name}.pdf"]).load_data()
 
         # Parsing Document into nodes
