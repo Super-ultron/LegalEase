@@ -1,0 +1,86 @@
+/* src/components/HomePage.css */
+
+.home-page {
+    position: relative;
+    height: 100vh;
+    z-index: 1;
+    background-color: #E3F4F4;
+    cursor: none;
+  }
+  
+.cursor{
+  background-color: #C4DFDF;
+  height: 32px;
+  width: 32px;
+  border-radius: 50%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+}
+
+  .video-bg {
+    object-fit: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+  /* src/components/HomePage.css */
+
+.content {
+    position: absolute;
+    top: 50%;
+    left: 10%;
+    transform: translateY(-50%);
+    z-index: 1;
+    text-align: left;
+  }
+  
+  .main-title {
+    /* font-size: 2rem; */
+    font-size: 55px;
+    
+    color: black;
+    /* text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4); */
+    -webkit-text-stroke-width: 1.8px;
+  -webkit-text-stroke-color: black;
+  }
+  .description {
+    color: black;
+    font-size: 1.2rem;
+    max-width: 600px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    -webkit-text-stroke-width: 1.3px;
+  -webkit-text-stroke-color: black;
+  }
+    .sub-heading {
+    font-size: 38px;
+    margin-bottom: 1rem;
+    color: black;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    }
+  
+  
+  .try-now-button {
+    background-color: black; 
+    color: #fff;
+    border: none;
+    padding: 1rem 1.5rem;
+    border-radius: 7px;
+    box-shadow: 2px;
+    font-size: 1rem;
+    cursor: pointer;
+    -webkit-text-stroke-width: 1px;
+  -webkit-text-stroke-color: white;
+    
+  }
+.app__profile-item{
+  width: 190px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  flex-direction: column;
+  /* margin: 2rem; */
+}
