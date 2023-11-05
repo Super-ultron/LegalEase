@@ -20,6 +20,13 @@ from llama_index.llms import OpenAI as op1
 
 from typing import List, Union
 
+from langchain.schema import AgentAction, AgentFinish
+from langchain.prompts import StringPromptTemplate
+from langchain.agents import AgentExecutor, LLMSingleActionAgent, AgentOutputParser, Tool
+from langchain.chat_models import ChatOpenAI
+from langchain.chains import LLMChain
+from langchain.llms import OpenAI as op2
+
 from legalease_environment import openai_key, openai_keyp
 
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
@@ -27,7 +34,7 @@ logging.getLogger().addHandler(logging.StreamHandler(stream=sys.stdout))
 
 os.environ['OPENAI_API_KEY'] = openai_key
 
-llm = op1(temperature=0, model='gpt-3.5-turbo')
+llm = op1(temperature=0, model='gpt-3.5-turbo-0613')
 service_context = ServiceContext.from_defaults(llm=llm)
 
 def remove_formatting(output):
@@ -125,18 +132,55 @@ def preprocessing():
 
     output_parser = CustomOutputParser()
 
-    llm = op2(temperature=0)
+    llm = op2(temperature=0,llm = "gpt-3.5-turbo-instruct")
     llm_chain = LLMChain(llm=llm, prompt=prompt)
 
     tool_names = [tool.name for tool in tools]
     agent = LLMSingleActionAgent(
         llm_chain = llm_chain, 
         output_parser = output_parser,
-        stop = ["\nObservation"], 
+        stop = ["\nObservation\n"], 
         allowed_tools = tool_names
     )
 
     agent_chain = AgentExecutor.from_agent_and_tools(tools = tools, agent = agent, verbose = True)
 
     return agent_chain
-  
+    
+class CustomPromptTemplate(StringPromptTemplate):
+    template: str
+    tools: List[Tool]
+    
+    def format(self, **kwargs) -> str:
+        intermediate_steps = kwargs.pop("intermediate_steps")
+        thoughts = ""
+        for action, observation in intermediate_steps:
+            thoughts += action.log
+            thoughts += f"\nObservation: {observation}\nThought: "
+        kwargs["agent_scratchpad"] = thoughts
+        kwargs["tools"] = "\n".join([f"{tool.name}: {tool.description}" for tool in self.tools])
+        kwargs["tool_names"] = ", ".join([tool.name for tool in self.tools])
+        return self.template.format(**kwargs)
+    
+class CustomOutputParser(AgentOutputParser):
+    
+    def parse(self, llm_output: str) -> Union[AgentAction, AgentFinish]:
+        if "Final Answer:" in llm_output:
+            return AgentFinish(
+                return_values={"output": llm_output.split("Final Answer:")[-1].strip()},
+                log=llm_output,
+            )
+        regex = r"Action\s*\d*\s*:(.*?)\nAction\s*\d*\s*Input\s*\d*\s*:[\s]*(.*)"
+        match = re.search(regex, llm_output, re.DOTALL)
+        if not match:
+            raise ValueError(f"Could not parse LLM output: `{llm_output}`")
+        action = match.group(1).strip()
+        action_input = match.group(2)
+        return AgentAction(tool=action, tool_input=action_input.strip(" ").strip('"'), log=llm_output)
+
+
+# agent_chain = preprocessing()
+# agent_chain.run("Draft an agreement for sale of goods between two parties i.e M/s Elite Electronics and Bright Bulb Pvt. Ltd. Bright Bulb Pvt. Ltd. will supply material to M/s Elite Electronics as per their demand, but M/s Elite Electronics must have to buy minimum 500 units per month, not less than that and cost for each unit will be dependent on the material. The term period for this agreement will be of 15 months.")
+# print(query_engine.query("Draft an agreement for sale of goods between two parties i.e M/s Elite Electronics and Bright Bulb Pvt. Ltd. Bright Bulb Pvt. Ltd. will supply material to M/s Elite Electronics as per their demand, but M/s Elite Electronics must have to buy minimum 500 units per month, not less than that and cost for each unit will be dependent on the material. The term period for this agreement will be of 15 months."))
+# print(query_engine.query("Write an agreement to sale of a commercial property of size 20x40 at a price of Rs.50,00,000.00 and has no pending lawsuit."))
+# print(query_engine.query("Draft a lease agreement for a residential property for minimum 8 months with the advance rent of 2 months and the decided rent is Rs.10,000 per month."))
