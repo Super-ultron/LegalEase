@@ -51,17 +51,17 @@ You can download our PowerPoint presentation to learn more about our AI-powered 
 - **Team Member 1**
   - **Name:** Ashwin Tyagi
   - **Branch:** Btech
-  - **Stream:** CSE
+  - **Stream:** Computer Science and Engineering
   - **Year:** 2
 
 - **Team Member 2**
   - **Name:** Shreesh Shukla
   - **Branch:** Btech
-  - **Stream:** CSE
+  - **Stream:** Computer Science and Engineering
   - **Year:** 2
 
 - **Team Member 3**
   - **Name:** Devesh Mishra
   - **Branch:** Btech
-  - **Stream:** CSE
+  - **Stream:** Computer Science and Engineering
   - **Year:** 2
