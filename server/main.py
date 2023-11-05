@@ -27,12 +27,12 @@ from langchain.chat_models import ChatOpenAI
 from langchain.chains import LLMChain
 from langchain.llms import OpenAI as op2
 
-from legalease_environment import openai_key, openai_keyp
+# from legalease_environment import openai_key, openai_keyp
 
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 logging.getLogger().addHandler(logging.StreamHandler(stream=sys.stdout))
 
-os.environ['OPENAI_API_KEY'] = openai_key
+# os.environ['OPENAI_API_KEY'] = openai_key
 
 llm = op1(temperature=0, model='gpt-3.5-turbo-0613')
 service_context = ServiceContext.from_defaults(llm=llm)
